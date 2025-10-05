@@ -1,13 +1,15 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { ScriptService } from "./script.service";
 
 @Controller()
 export class ScriptController {
   constructor(private readonly scriptService: ScriptService ) {}
 
-  @Post('generate')
-  async generate(@Body() body: any) {
-    return this.scriptService.generate(body)
+  // Generate the script using query passed into function in script.service.ts
+  @Get('generate')
+  async generateNow(@Query("lat") lat:number, @Query("lon") lon:number) {
+    const result = await this.scriptService.generateScript(lat, lon);
+    return result;
   }
 
    @Get('check')
