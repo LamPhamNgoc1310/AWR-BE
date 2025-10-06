@@ -12,7 +12,13 @@ export class ScriptController {
     return result;
   }
 
-   @Get('check')
+  @Get('weather-info')
+  async getWeatherInfo(@Query("lat") lat:number, @Query("lon") lon:number){
+    const result = await this.scriptService.getWeatherInfo(lat,lon);
+    return result;
+  }
+
+  @Get('check')
   check() {
     return { ok: true };
   }

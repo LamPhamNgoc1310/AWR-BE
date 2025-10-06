@@ -11,6 +11,7 @@ export class ScriptService {
   private HF_ENDPOINT=process.env.HF_ENDPOINT!;
 
   // note
+  // take weather info from owm api 
   async getWeatherInfo(lat: number, lon:number) {
     const {data} = await axios.get(this.OWM, {
       params: {lat, lon, exclude:"hourly,current,minutely,alerts", appid: this.OWM_KEY, units:"metric"},
@@ -29,17 +30,16 @@ export class ScriptService {
     };
     return owm_data;
   }
-  // post to NLP and return script
+  // post to NLP model on HF and return script
   async send_HF(owm: any, gen_params = {temperature: 0.3, top_p: 0.85, max_new_tokens: 100, repetition_penalty: 1.1 }) {
     const payload = { owm, ...gen_params}; // same params as model
     const {data} = await axios.post(this.HF_ENDPOINT, payload, {timeout: 20_000});
     return data?.script ?? "";
   }
-
   async generateScript(lat: number, lon: number) {
     const owm_data = await this.getWeatherInfo(lat, lon);
     const script = await this.send_HF(owm_data);
-    return { owm_data, script };
-    console.log({owm_data, script})
+    return { script };
+    console.log("generateScript: ",{owm_data, script})
   }
 }
